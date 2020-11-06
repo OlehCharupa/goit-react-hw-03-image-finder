@@ -3,36 +3,64 @@ import "./App.css"
 import Button from './Button/Button';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Searchbar from './Searchbar/Searchbar';
-import axios from "axios";
 import Loader from 'react-loader-spinner'
+import { getImages } from '../helpers/helpers';
 
 
 
 class App extends Component {
     state = {
         cards: [],
+        query: "all",
+        page: 1,
         loader: true,
+        error: false
     }
-
-    componentDidMount() {
-        axios.get(`https://pixabay.com/api/?key=18623369-889f6d1cb3a21a0bcc2be87ce&q=yellow+flowers&image_type=photo&orientation=horizontal&per_page=12`)
-            .then(response => response.data)
+    updateCards = (cards) => {
+        this.setState({
+            cards,
+            page: 2
+        })
+    }
+    lodeMore = () => {
+        const { query, page } = this.state
+        getImages(query, page)
             .then(data => {
-                const result = data.hits
-                this.setState({
-                    cards: result,
-                    loader: false
-                })
+                this.setState(prev => ({
+                    cards: [...prev.cards, ...data.hits],
+                    page: prev.page + 1
+                }))
             })
+        window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth',
+        });
+    }
+    componentDidMount() {
+        getImages(this.state.query).then(data => {
+            const result = data.hits
+            this.setState({
+                cards: [...result],
+                loader: false,
+                page: 2
+            })
+        })
     }
     render() {
-        const { cards, loader } = this.state
+        const { cards, loader, url, apiKey, query, perPage, page } = this.state
         return (
             <>
-                <Searchbar />
-                {loader ? <Loader type="Grid" color="#00BFFF" height={380} width={380}
-                /> : <ImageGallery cards={cards} />}
-                <Button />
+                <Searchbar
+                    updateCards={this.updateCards}
+                    url={url}
+                    apiKey={apiKey}
+                    query={query}
+                    perPage={perPage}
+                    page={page} />
+                {loader
+                    ? <Loader type="Grid" color="#00BFFF" height={380} width={380} />
+                    : <><ImageGallery cards={cards} /> <Button lodeMore={this.lodeMore} /></>}
+
             </>
         );
     };
