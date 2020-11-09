@@ -5,6 +5,7 @@ import ImageGallery from './ImageGallery/ImageGallery';
 import Searchbar from './Searchbar/Searchbar';
 import Loader from 'react-loader-spinner'
 import { getImages } from '../helpers/helpers';
+import Modal from './Modal/Modal';
 
 
 
@@ -14,7 +15,9 @@ class App extends Component {
         query: "all",
         page: 1,
         loader: true,
-        error: false
+        error: false,
+        modalShow: false,
+        largeImageURL: ""
     }
     updateCards = (cards) => {
         this.setState({
@@ -31,10 +34,25 @@ class App extends Component {
                     page: prev.page + 1
                 }))
             })
+    }
+    activImages = ({ target }) => {
+        const image = target.dataset.source
+        this.setState({
+            largeImageURL: image
+        })
+        this.toggleModal()
+    }
+    toggleModal = () => {
+        this.setState(state => ({
+            modalShow: !state.modalShow,
+        }))
+    }
+    scrollTo = () => {
         window.scrollTo({
             top: document.documentElement.scrollHeight,
             behavior: 'smooth',
         });
+
     }
     componentDidMount() {
         getImages(this.state.query).then(data => {
@@ -46,20 +64,21 @@ class App extends Component {
             })
         })
     }
+    componentDidUpdate() {
+        this.scrollTo()
+    }
     render() {
-        const { cards, loader, url, apiKey, query, perPage, page } = this.state
+        const { cards, loader, modalShow, largeImageURL } = this.state
         return (
             <>
                 <Searchbar
                     updateCards={this.updateCards}
-                    url={url}
-                    apiKey={apiKey}
-                    query={query}
-                    perPage={perPage}
-                    page={page} />
+                />
                 {loader
                     ? <Loader type="Grid" color="#00BFFF" height={380} width={380} />
-                    : <><ImageGallery cards={cards} /> <Button lodeMore={this.lodeMore} /></>}
+                    : <><ImageGallery cards={cards} toggleModal={this.toggleModal} activImages={this.activImages} /> <Button lodeMore={this.lodeMore} />
+                        {modalShow && <Modal toggleModal={this.toggleModal} largeImageURL={largeImageURL} />}
+                    </>}
 
             </>
         );

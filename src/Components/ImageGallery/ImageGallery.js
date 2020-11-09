@@ -3,16 +3,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ImageGalleryItem from "../ImageGalleryItem/ImageGalleryItem";
 
-const ImageGallery = ({ cards }) => {
+const ImageGallery = ({ cards, activImages }) => {
     return (
         <ul className="ImageGallery">
-            {cards.map(card => <ImageGalleryItem {...card} key={card.id} />)}
+            {cards.map(card => <ImageGalleryItem {...card} key={card.id} activImages={activImages} />)}
         </ul>
     );
 }
 
 ImageGallery.propTypes = {
-    cards: PropTypes.array
+    cards: PropTypes.array,
+    activImages: PropTypes.func
 };
 
 export default ImageGallery;

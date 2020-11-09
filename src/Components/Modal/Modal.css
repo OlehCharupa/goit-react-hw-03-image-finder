@@ -19,3 +19,9 @@
   max-width: calc(100vw - 48px);
   max-height: calc(100vh - 24px);
 }
+.btnClose {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px;
+}

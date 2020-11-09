@@ -45,7 +45,7 @@ const Searchbar = ({ updateCards }) => {
 };
 
 Searchbar.propTypes = {
-
+    updateCards: PropTypes.func
 };
 
 export default Searchbar;
