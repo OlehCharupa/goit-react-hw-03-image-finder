@@ -54,7 +54,13 @@ class App extends Component {
         });
 
     }
+    setSearch = ({ target }) => {
+        this.setState({
+            query: target.value
+        })
+    }
     componentDidMount() {
+        console.log('componentDidMount');
         getImages(this.state.query).then(data => {
             const result = data.hits
             this.setState({
@@ -65,20 +71,25 @@ class App extends Component {
         })
     }
     componentDidUpdate() {
+        console.log('componentDidUpdate');
         this.scrollTo()
     }
     render() {
-        const { cards, loader, modalShow, largeImageURL } = this.state
+        const { cards, loader, modalShow, largeImageURL, query } = this.state
         return (
             <>
                 <Searchbar
+                    search={query}
                     updateCards={this.updateCards}
+                    setSearch={this.setSearch}
                 />
+                <ImageGallery cards={cards} toggleModal={this.toggleModal} activImages={this.activImages} />
                 {loader
                     ? <Loader type="Grid" color="#00BFFF" height={380} width={380} />
-                    : <><ImageGallery cards={cards} toggleModal={this.toggleModal} activImages={this.activImages} /> <Button lodeMore={this.lodeMore} />
-                        {modalShow && <Modal toggleModal={this.toggleModal} largeImageURL={largeImageURL} />}
-                    </>}
+                    : <> {cards.length && <Button lodeMore={this.lodeMore} />}
+                    </>
+                }
+                {modalShow && <Modal toggleModal={this.toggleModal} largeImageURL={largeImageURL} />}
 
             </>
         );

@@ -4,13 +4,10 @@ import PropTypes from 'prop-types';
 import { getImages } from '../../helpers/helpers';
 
 
-const Searchbar = ({ updateCards }) => {
-    const [search, setSearch] = useState("")
+const Searchbar = ({ updateCards, search, setSearch }) => {
+    // const [search, setSearch] = useState("")
 
-    const inputHendler = ({ target }) => {
-        const { value } = target
-        setSearch(value)
-    }
+
     const onSubmit = (e) => {
         e.preventDefault()
         getImages(search)
@@ -18,8 +15,6 @@ const Searchbar = ({ updateCards }) => {
                 const result = data.hits
                 updateCards(result)
             })
-
-        setSearch("")
     }
 
     return (
@@ -30,7 +25,7 @@ const Searchbar = ({ updateCards }) => {
                 </button>
 
                 <input
-                    onChange={inputHendler}
+                    onChange={setSearch}
                     name="search"
                     value={search}
                     className="SearchForm-input"
